@@ -1,0 +1,21 @@
+.gitignore.txt
+# Dependency directories
+**/node_modules/
+
+# dotenv files
+**/.env
+**/.env.local
+**/.env.*.local
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# System files
+.DS_Store
+Thumbs.db
