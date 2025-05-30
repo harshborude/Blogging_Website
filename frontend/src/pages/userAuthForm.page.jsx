@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { storeInSession } from "../common/session";
 import { UserContext } from "../App";
+import { authWithGoogle } from "../common/firebase";
 
 const UserAuthForm = ({ type }) => {
   const authForm = useRef(null);
@@ -57,6 +58,34 @@ const UserAuthForm = ({ type }) => {
     userAuthThroughServer(serverRoute, formData);
   };
 
+  const handleGoogleAuth = async (e) => {
+  e.preventDefault();
+
+  try {
+    const user = await authWithGoogle();
+
+    if (!user) {
+      toast.error("Google sign-in failed");
+      return;
+    }
+
+    // You may need to send the user's info to your backend as well:
+    const formData = {
+      fullname: user.displayName,
+      email: user.email,
+      password: user.uid, // Or generate a placeholder; depends on your backend
+    };
+
+    // Use the same server route as signup
+    userAuthThroughServer("/signup", formData);
+
+  } catch (err) {
+    toast.error("Can't log in with Google");
+    console.error(err);
+  }
+};
+
+
   return (
     <AnimationWrapper keyValue={type}>
       <section className="h-cover flex items-center justify-center">
@@ -86,7 +115,8 @@ const UserAuthForm = ({ type }) => {
             <hr className="w-1/2 border-black" />
           </div>
 
-          <button type="button" className="btn-dark flex items-center justify-center gap-4 w-[90%] center">
+          <button type="button" className="btn-dark flex items-center justify-center gap-4 w-[90%] center"
+              onClick={handleGoogleAuth}>
             <img src={googleIcon} className="w-5" alt="Google Icon" />
             Continue with Google
           </button>
